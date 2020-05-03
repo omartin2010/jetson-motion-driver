@@ -12,13 +12,9 @@ This module is meant to run the robot's mechanical components.
 - [ ] Finish working on the IK testing
 - [ ] Make the robot arm position a "set point" and every X time, resynch to the set point... so MQTT would just "set the point". (maybe lower wiggle?)
 
-### Hardware (playing with Legos :))
-
-- [X] ~~Create a rotary gripper (Adding a 6th degree of freedom to the gripper - currently has 5 dof) with the turntable~~
-- [X] ~~Calibrate both IMU sensors~~
-
 ### Software
 
+- [ ] Need to move some of this in the parent project
 - [ ] Motion Feedback (via mqtt pubsub reversed so the client knows the bot is in place)
 - [ ] Error Handling to MQTT error queue (in custom error handlers)
 - [ ] Go to home position (avoiding obstacles)
