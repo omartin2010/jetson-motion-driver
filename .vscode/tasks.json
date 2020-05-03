@@ -1,0 +1,60 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {   // launchMotionDriverContainer
+            "label": "launchMotionDriverContainer",
+            "type": "shell",
+            "isBackground": false,
+            "command": [
+                "docker rm motiondriver-dev;",
+                "export DOCKER_IMG=motiondriver:test;",
+                "export SCRIPT=\"src/startup.py\";",
+                "export CWD=\"/root/motiondriver\";",
+                "export ROOT_CWD=\"/home/robot/proj/motiondriver\";",
+                "export DOCKER_ARGS=\"--privileged -d --name motiondriver-dev --network host\";",
+                "export DOCKER_ARGS=\"$DOCKER_ARGS -v $ROOT_CWD:$CWD\";",
+                "export DOCKER_ARGS=\"$DOCKER_ARGS -w $CWD\";",
+                "export CMD=\"python3 -m debugpy --listen 0.0.0.0:5678 --wait-for-client $SCRIPT\";",
+                "export CMD_ARGS=\"-f robot-def-pi.json\";",
+                "echo docker_args=$DOCKER_ARGS;",
+                "echo cmd=$CMD;",
+                "docker run $DOCKER_ARGS $DOCKER_IMG $CMD $CMD_ARGS;",
+                "echo 'Waiting 3 seconds to connect...';",
+                "sleep 3;",
+                "echo 'Ready to connect...';"
+            ],
+            "options": {
+                "shell": {
+                    "executable": "/bin/bash",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "problemMatcher": [
+                "$eslint-compact"
+            ]
+        },
+        {   // stopMotionDriverContainer
+            "label": "stopMotionDriverContainer",
+            "type": "shell",
+            "isBackground": false,
+            "command": [
+                "docker stop motiondriver-dev;",
+            ],
+            "options": {
+                "shell": {
+                    "executable": "/bin/bash",
+                    "args": [
+                        "-c"
+                    ]
+                }
+            },
+            "problemMatcher": [
+                "$eslint-compact"
+            ]
+        }
+    ]
+}

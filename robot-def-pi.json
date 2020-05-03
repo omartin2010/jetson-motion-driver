@@ -1,0 +1,175 @@
+{
+    "mqtt":{
+        "brokerIP" : "192.168.32.50",
+        "brokerPort" : 1883,
+        "brokerProto" : "tcp",
+        "subscribedTopics":["bot/base/move/xyphi",
+                            "bot/base/move/x",
+                            "bot/base/move/forward",
+                            "bot/base/turn/phi",
+                            "bot/base/move/home",
+                            "bot/base/reset/position",
+                            "bot/arm/move/rest",
+                            "bot/arm/move/zero",
+                            "bot/arm/move/theta",
+                            "bot/arm/reset/position",
+                            "bot/gripper/position",
+                            "bot/gripper/open",
+                            "bot/gripper/close",
+                            "bot/killSwitch",
+                            "bot/logger",
+                            "bot/logger/multiple"],
+        "publishingTopics":["client/moveBaseFeedback",
+                            "client/moveEndEffectorFeedback",
+                            "client/ErrorHandling"]
+    },
+    "base":{
+        "sizing":{
+            "baseHeight" : 0.068,
+            "interWheelDistance" : 0.246,
+            "wheelRadius" : 0.0341,
+            "baseHeightDescription" : "wrt under base of lateral frame - old radius = 0.0341 - new = "
+        },    
+        "motors":{
+            "leftMotor" : {
+                "output" : "OUTPUT_E",
+                "description" : "LeftWheelMotor",
+                "defaultStopAction" : "STOP_ACTION_COAST"
+            },
+            "rightMotor" : {
+                "output" : "OUTPUT_H",
+                "description" : "RightWheelMotor",
+                "defaultStopAction" : "STOP_ACTION_COAST"
+            }
+        }
+    },
+    "cameraConfiguration":{
+        "Tbc":{
+            "rotationMatrix" : [[1,0,0],[0,1,0],[0,0,1]],
+            "p" : [0.270, 0.0, 0.085],
+            "p_description" : "wrt to ref point being between two wheels, at base height (ref baseHeight above) - ref is front of cam lens"
+        }
+    },
+    "arm":{
+        "arm1":{
+            "manipulatorConfiguration":{
+                "M0e":{
+                    "rotationMatrix": [[0.766, 0, 0.6428], [0, 1, 0],[-0.6428, 0, 0.766]],
+                    "p" : [0.4563, 0, 0.5298]
+                },
+                "Toe_standoff":{
+                    "note": "unused...",
+                    "rotationMatrix":[[0, 0, -1], [0, 1, 0], [1, 0, 0]],
+                    "p" : [0, 0, 0.05]
+                },
+                "Toe_grip":{
+                    "note": "unused...",
+                    "rotationMatrix" : [[0.7071, 0, -0.7071], [0, 1, 0], [0.7071, 0, 0.7071]],
+                    "rotationMatrix90":[[0, 0, -1], [0, 1, 0], [1, 0, 0]],
+                    "p" : [0, 0, 0]
+                }
+            },
+            "armRestPosition" : [0,112.5],
+            "armZeroPosition" : [0,0],
+            "armDrivePosition" : [30,110],
+            "links":{
+                    "link1" : {
+                        "description" : "Represents the movement forward by -10cm to 10cm to mimic a translational joint. joint screw = wx, wy, wz = 0,.0,0,0 ==> sin theta, 0, -cos theta",
+                        "virtual" : true,
+                        "linkID" : 1,
+                        "angleLimit" : [-0.10, 0.10],
+                        "jointScrewB" : [0.0, 0.0, 0.0, 0.7071, 0.0, -0.7071],
+                        "initOrder" : 0
+                    },
+                    "link2" : {
+                        "description" : "Represents the rotation in place about the Z axis of the base of the robot to mimic a revolving joint.",
+                        "virtual" : true,
+                        "linkID" : 2,
+                        "angleLimit" : [-90,90],
+                        "jointScrewB" : [0.0, 0.0, 1, 0.0, 0.4369, 0.0],
+                        "initOrder" : 0
+                    },
+                    "link3" : {
+                        "description" : "First motorized joint for the arm",
+                        "linkID" : 3,
+                        "output" : "OUTPUT_A",
+                        "polarity" : 1,
+                        "gearRatio" : 5.0,
+                        "angleLimit" : [-30,120],
+                        "jointScrewB" : [0.0, 1.0, 0.0, 0.056, 0.0, -0.384],
+                        "initOrder" : 1,
+                        "motorMinSpeedDPS" : 10,
+                        "motorMaxSpeedDPS" : 15,
+                        "maxDelta" : 20,
+                        "gyroAngleVerticalOffsetX": 45,
+                        "gyroSensor" : {
+                            "input" : "INPUT_3",
+                            "i2cbus" : "5",
+                            "address" : "0x11"
+                        },
+                        "wiggleDeg" : 1.0
+                    },
+                    "link4" : {
+                        "description" : "Second motorized joint for the arm",
+                        "linkID" : 4,
+                        "output" : "OUTPUT_D",
+                        "polarity" : 1,
+                        "gearRatio": 40,
+                        "angleLimit" : [-50,160],
+                        "jointScrewB" : [0.0, 1.0, 0.0, 0.04, 0.0, -0.200],
+                        "initOrder" : 2,
+                        "motorMinSpeedDPS" : 15,
+                        "motorMaxSpeedDPS" : 500,
+                        "maxDelta": 90,
+                        "gyroLinkDep": 3,
+                        "gyroSensor" : {
+                            "input" : "INPUT_4",
+                            "i2cbus" : "6",
+                            "address" : "0x11"
+                        },
+                        "wiggleDeg" : 1.0
+                    }
+            },
+            "new_links":{
+                "link5" : {
+                    "description" : "Gripper Rotation",
+                    "linkID" : 3,
+                    "output" : "OUTPUT_G",
+                    "polarity" : 1,
+                    "gearRatio" : 5.0,
+                    "angleLimit" : [-30,120],
+                    "jointScrewB" : [0.0, 1.0, 0.0, 0.032, 0.000, -0.424],
+                    "initOrder" : 1,
+                    "motorMinSpeedDPS" : 10,
+                    "motorMaxSpeedDPS" : 25
+                    }
+            },
+            "endEffector" : {
+                "output" : "OUTPUT_F",
+                "initSpeedPercent" : 100,
+                "initMethod" : "MOTOR_INIT_METHOD_DONT_INIT",
+                "openClose" : 1400
+            }
+        }
+    },
+    "sensors" : {
+        "killSwitch" : {
+            "sensorType" : "TouchSensor",
+            "input" : "INPUT_5",
+            "mode" : "ev3-analog",
+            "set_device" : "lego-ev3-touch"
+        },
+        "configureButton" : {
+            "sensorType": "TouchSensor",
+            "input" : "INPUT_6",
+            "mode": "ev3-analog",
+            "set_device" : "lego-ev3-touch"
+            },
+        "distanceSensor" : {
+            "sensorType" : "UltrasonicSensor",
+            "input": "INPUT_1",
+            "mode": "ev3-uart",
+            "set_device" : "lego-ev3-us"
+        }
+    }
+}
