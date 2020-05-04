@@ -696,17 +696,24 @@ class DiffDriveManipulatorRobot(object):
                           msg=f'Strange... MID doesn\'t match '
                           f'self.mqtt_connect_mid')
 
-        self.mqttClient = mqtt.Client(
-            client_id="mybot",
-            clean_session=True,
-            transport=self.robotConfiguration["mqtt"]["brokerProto"])
-        self.mqttClient.enable_logger(
-            logger=RoboLogger.getSpecificLogger(LOGGER_DDR_THREADIMPLMQTT))
-        self.mqttClient.on_subscribe = on_subscribe
-        self.mqttClient.on_connect = on_connect
-        self.mqttClient.on_disconnect = on_disconnect
-        self.mqttClient.on_message = on_message
-        self.mqttClient.connect(
-            host=self.robotConfiguration["mqtt"]["brokerIP"],
-            port=self.robotConfiguration["mqtt"]["brokerPort"])
-        self.mqttClient.loop_start()
+        try:
+            self.mqttClient = mqtt.Client(
+                client_id="pi",
+                clean_session=True,
+                transport=self.robotConfiguration["mqtt"]["brokerProto"])
+            self.mqttClient.enable_logger(
+                logger=RoboLogger.getSpecificLogger(LOGGER_DDR_THREADIMPLMQTT))
+            self.mqttClient.on_subscribe = on_subscribe
+            self.mqttClient.on_connect = on_connect
+            self.mqttClient.on_disconnect = on_disconnect
+            self.mqttClient.on_message = on_message
+            self.mqttClient.connect(
+                host=self.robotConfiguration["mqtt"]["brokerIP"],
+                port=self.robotConfiguration["mqtt"]["brokerPort"])
+            self.mqttClient.loop_start()
+        except Exception:
+            log.error(LOGGER_DDR_THREADIMPLMQTT,
+                      msg=f'Error : {traceback.print_exc()}')
+        finally:
+            log.warning(LOGGER_DDR_THREADIMPLMQTT,
+                        msg=f'Exiting MQTT connection thread.')
