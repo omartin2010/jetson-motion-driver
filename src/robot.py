@@ -698,7 +698,7 @@ class DiffDriveManipulatorRobot(object):
 
         try:
             self.mqttClient = mqtt.Client(
-                client_id="pi",
+                client_id=self.robotConfiguration["mqtt"]["clientID"],
                 clean_session=True,
                 transport=self.robotConfiguration["mqtt"]["brokerProto"])
             self.mqttClient.enable_logger(
