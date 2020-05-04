@@ -1,6 +1,8 @@
-from ev3dev2.motor import LargeMotor, OUTPUT_A, OUTPUT_B, OUTPUT_C, OUTPUT_D, OUTPUT_E, OUTPUT_F, OUTPUT_G, OUTPUT_H
+from ev3dev2.motor import LargeMotor, OUTPUT_A, OUTPUT_B, OUTPUT_C, OUTPUT_D, \
+    OUTPUT_E, OUTPUT_F, OUTPUT_G, OUTPUT_H
 from ev3dev2.sensor.lego import TouchSensor, UltrasonicSensor, Sensor
-from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6, INPUT_7, INPUT_8
+from ev3dev2.sensor import INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, \
+    INPUT_6, INPUT_7, INPUT_8
 STOP_ACTION_COAST = LargeMotor.STOP_ACTION_COAST
 STOP_ACTION_BRAKE = LargeMotor.STOP_ACTION_BRAKE
 STOP_ACTION_HOLD = LargeMotor.STOP_ACTION_HOLD
@@ -25,10 +27,14 @@ GYRO_LOOP_TIMER = 0.1  # run loop every 100ms
 GYRO_COMPLEMENTARY_FILTER_TIME_CONSTANT = 1.0
 # endregion
 
-MOTOR_INIT_METHOD_BUTTON_PRESSED = 'button-pressed'     # Press a button to indicate the min and max limits
-MOTOR_INIT_METHOD_MECHANICAL = 'mechanical'             # Mechanical blocking determine joint limits - WARNING - CAN BREAK GEARS
-MOTOR_INIT_METHOD_MANUAL = 'manual'                     # Manually set the joint position to 0 and press the button
-MOTOR_INIT_METHOD_DONT_INIT = 'no_init'                 # Do not change the current settings
+# Press a button to indicate the min and max limits
+MOTOR_INIT_METHOD_BUTTON_PRESSED = 'button-pressed'
+# Mechanical blocking determine joint limits - WARNING - CAN BREAK GEARS
+MOTOR_INIT_METHOD_MECHANICAL = 'mechanical'
+# Manually set the joint position to 0 and press the button
+MOTOR_INIT_METHOD_MANUAL = 'manual'
+# Do not change the current settings
+MOTOR_INIT_METHOD_DONT_INIT = 'no_init'
 JOINT_TESTING_DIRECTION_MIN = 'min'
 JOINT_TESTING_DIRECTION_MAX = 'max'
 JOINT_MAX_SPEED_PERCENT = 50
@@ -43,11 +49,14 @@ MOVEMENT_TIME_SCALING_METHOD_DEFAULT = MOVEMENT_TIME_SCALING_METHOD_CUBIC
 ODOMETRY_BASE_LOGGING_LOOP_AGGREGATED = 250   # 500
 ODOMETRY_GYRO_LOGGING_LOOP_AGGREGATED = 10
 MOTOR_RAMP_UP_TIME = 30000
-JOINT_MOTOR_RAMP_TIME = 50000   # means going from 0 to 10% of maxpseed will happen in ((10%*1500)/1500) * 25000msec = 2.5s
+# means going from 0 to 10% of maxpseed will
+# happen in ((10%*1500)/1500) * 25000msec = 2.5s
+JOINT_MOTOR_RAMP_TIME = 50000
 JOINT_MOTOR_RAMP_UP_TIME = JOINT_MOTOR_RAMP_TIME
 JOINT_MOTOR_RAMP_DOWN_TIME = JOINT_MOTOR_RAMP_TIME
 MAX_WORKER_THREADS = 5
-LOW_VOLTAGE_THRESHOLD = 5               # CHANGE to 7 when batteries are charged.
+# CHANGE to 7 when batteries are charged
+LOW_VOLTAGE_THRESHOLD = 5
 DOUBLECLICK = 1     # seconds for doubleclick on sensors
 
 # region LOGGERS
