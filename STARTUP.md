@@ -1,9 +1,14 @@
-To start MQTT daemon : 
+To start the motion driver, run the vscode command using the docker container start task (see [`tasks.json`](./.vscode/tasks.json)), and the [`launch.json`](./.vscode/launch.json) configuration.
+
+To start the motion driver, use this :
 ```
 docker run --rm -d \
-    --name mqtt \
-    -p 1883:1883 \
-    -p 9001:9001 \
-    -v /home/robot/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf \
-    eclipse-mosquitto:latest
+    --name motion-driver \
+    --privileged \
+    -d \
+    --name motiondriver \
+    --network host \
+    motiondriver:latest
 ```
+
+This `motiondriver:latest` image the result of the [Dockerfile](./docker/Dockerfile) created in this project.
