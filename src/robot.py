@@ -11,7 +11,6 @@ from ev3dev2.power import PowerSupply
 from logger import RoboLogger
 import numpy as np
 import queue
-# import logging
 import functools
 import time
 import os
@@ -88,8 +87,8 @@ class DiffDriveManipulatorRobot(object):
         Creates the main bot class.
         """
         if not os.path.exists(robot_config_file):
-            raise ValueError(f'Cannot find configuration file '
-                             f'"{robot_config_file}"')
+            raise ValueError('Cannot find configuration file ')
+            # f'"{robot_config_file}"')
 
         with open(robot_config_file, 'r') as f:
             self.robotConfiguration = json.load(f)
@@ -149,10 +148,10 @@ class DiffDriveManipulatorRobot(object):
 
     def __del__(self):
         """ Destructor """
-        loggerName = 'ddrmain'
-        log.info(loggerName,
+        # loggerName = 'ddrmain'
+        log.info(LOGGER_DDR_MAIN,
                  msg=f'Deleting robot ; opening gripper '
-                     f'and shutting down motors.')
+                 f'and shutting down motors.')
         # Open the gripper
         self.arm.openEndEffector()
         # Shut down the motors
@@ -236,7 +235,7 @@ class DiffDriveManipulatorRobot(object):
                 else:
                     log.error(LOGGER_DDR_RUN,
                               msg=f'Exception handled in one of the '
-                                  f'spawned process : {exc}')
+                              f'spawned process : {exc}')
                     raise exc
                 self.eventLoopThread.join(0.2)
                 if self.eventLoopThread.isAlive():
@@ -303,13 +302,13 @@ class DiffDriveManipulatorRobot(object):
                     except LowVoltageException:
                         log.warning(LOGGER_DDR_THREADIMPLMQTT,
                                     msg=f'Low voltage threshold '
-                                        f'{float(LOW_VOLTAGE_THRESHOLD):.2} '
-                                        f'reached. Current voltage = '
-                                        f'{self.currentVoltage:.2f} .'
-                                        f'Robot will not move, but MQTT '
-                                        f'message will attempt to process. '
-                                        f'Consider charging the battery, '
-                                        f'or find some kind of power supply')
+                                    f'{float(LOW_VOLTAGE_THRESHOLD):.2} '
+                                    f'reached. Current voltage = '
+                                    f'{self.currentVoltage:.2f} .'
+                                    f'Robot will not move, but MQTT '
+                                    f'message will attempt to process. '
+                                    f'Consider charging the battery, '
+                                    f'or find some kind of power supply')
                     # Remove the first in the list, will pause until there
                     # is something
                     currentMQTTMoveMessage = self.mqttMoveQueue.get()
@@ -322,7 +321,7 @@ class DiffDriveManipulatorRobot(object):
                         if msgdict['override']:
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'Overriding all motion - calling '
-                                          f'killswitch to empty queue')
+                                      f'killswitch to empty queue')
                             # Urgently stop the current movement (and empty
                             # movement queue - done in killSwitch)
                             self.killSwitch()
@@ -341,14 +340,12 @@ class DiffDriveManipulatorRobot(object):
 
                     if currentMQTTMoveMessage.topic == 'bot/killSwitch':
                         self.killSwitch()
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/base/reset/position':
                         log.warning(
                             LOGGER_DDR_IMPLMOVELOOP,
                             msg=f'Invoking reset body configuration')
                         self.base.resetBodyConfiguration()
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/base/move/xyphi':
                         self.eventLoop.run_in_executor(
@@ -360,7 +357,6 @@ class DiffDriveManipulatorRobot(object):
                                               pid=pid,
                                               velocity_factor=velocity_factor,
                                               dryrun=dryrun))
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/base/move/x':
                         self.eventLoop.run_in_executor(
@@ -371,7 +367,6 @@ class DiffDriveManipulatorRobot(object):
                                               velocity_factor=velocity_factor,
                                               wheel_radius=wheel_radius,
                                               dryrun=dryrun))
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/base/turn/phi':
                         self.eventLoop.run_in_executor(
@@ -383,7 +378,6 @@ class DiffDriveManipulatorRobot(object):
                                 velocity_factor=velocity_factor,
                                 inter_wheel_distance=inter_wheel_distance,
                                 dryrun=dryrun))
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/base/move/home':
                         # Calculate where to go from there (not avoiding
@@ -398,7 +392,6 @@ class DiffDriveManipulatorRobot(object):
                             velocity_factor=velocity_factor,
                             time_scaling_method=time_scaling_method,
                             dryrun=dryrun)
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/arm/move/rest':
                         self.eventLoop.run_in_executor(
@@ -407,7 +400,6 @@ class DiffDriveManipulatorRobot(object):
                                 self.arm.moveToAngle,
                                 armConfigVector=self.arm.armRestPosition,
                                 dryrun=dryrun))
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/arm/move/zero':
                         self.eventLoop.run_in_executor(
@@ -416,7 +408,6 @@ class DiffDriveManipulatorRobot(object):
                                 self.arm.moveToAngle,
                                 armConfigVector=self.arm.armZeroPosition,
                                 dryrun=dryrun))
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/arm/move/theta':
                         self.eventLoop.run_in_executor(
@@ -426,17 +417,14 @@ class DiffDriveManipulatorRobot(object):
                                 armConfigVector=[msgdict["theta1"],
                                                  msgdict["theta2"]],
                                 dryrun=dryrun))
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/gripper/open':
                         # Already an async call (non blocking)
                         self.arm.openEndEffector()
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/gripper/close':
                         # Already an async call (non blocking)
                         self.arm.closeEndEffector()
-
                     elif currentMQTTMoveMessage.topic == \
                             'bot/gripper/position':
                         # Call function to move this thing
@@ -456,7 +444,7 @@ class DiffDriveManipulatorRobot(object):
 
                         log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                   msg=f'Running inverse kinematics to get '
-                                      f'required joint angles.')
+                                  f'required joint angles.')
                         thetalist, success = mr.IKinBody(
                             Blist=self.arm.bList,
                             M=self.M0e,
@@ -468,23 +456,23 @@ class DiffDriveManipulatorRobot(object):
                             thetalist = thetalist.round(6)
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'IK Solved with joint thetas '
-                                          f'found {thetalist}')
+                                      f'found {thetalist}')
                             # 0. Open gripper
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'Opening or ensuring end effector '
-                                          f'is opened.')
+                                      f'is opened.')
                             self.arm.openEndEffector()
                             # 1. Move arm to 0 position - launch async.
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'Moving arm to driving'
-                                          f'position')
+                                      f'position')
                             self.arm.moveToAngle(
                                 armConfigVector=self.arm.armDrivePosition,
                                 dryrun=dryrun)
                             # 2. Move base by X first
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'Moving body by X '
-                                          f'{thetalist[0]:.2f}')
+                                      f'{thetalist[0]:.2f}')
                             self.base.moveBaseX(
                                 distance=thetalist[0],
                                 pid=pid,
@@ -493,7 +481,7 @@ class DiffDriveManipulatorRobot(object):
                             # 3. Rotate base by Phi
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'Rotating base by phi '
-                                          f'{thetalist[1]:.2f}')
+                                      f'{thetalist[1]:.2f}')
                             self.base.rotateBasePhi(
                                 phi=thetalist[1],
                                 pid=pid,
@@ -502,13 +490,13 @@ class DiffDriveManipulatorRobot(object):
                             # 4a. Move to standoff position
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'Moving arm joints to standoff '
-                                          f'position')
+                                      f'position')
                             # 4. Move other joint in position - need to block
                             log.debug(LOGGER_DDR_IMPLMOVELOOP,
                                       msg=f'Moving arm joints into position '
-                                          f'for picking up object j3 = '
-                                          f'{degrees(thetalist[2]):.2f}, '
-                                          f'j4 = {degrees(thetalist[3]):.2f}')
+                                      f'for picking up object j3 = '
+                                      f'{degrees(thetalist[2]):.2f}, '
+                                      f'j4 = {degrees(thetalist[3]):.2f}')
                             self.arm.moveToAngle(armConfigVector=thetalist[2:],
                                                  dryrun=dryrun)
                             # 5. Grab object
@@ -530,16 +518,16 @@ class DiffDriveManipulatorRobot(object):
                         else:
                             log.warning(LOGGER_DDR_IMPLMOVELOOP,
                                         msg=f'Unable to calculate joint and '
-                                            f'wheel angles to achieve the '
-                                            f'required position.')
-
+                                        f'wheel angles to achieve the '
+                                        f'required position.')
                     elif currentMQTTMoveMessage.topic == \
-                            'bot/logger':
+                            'bot/pi/logger':
                         # Changing the logging level on the fly...
                         log.setLevel(msgdict['logger'], lvl=msgdict['level'])
                     elif currentMQTTMoveMessage.topic == \
-                            'bot/logger/multiple':
-                        # Changing the logging level on the fly for multiple loggers at a time
+                            'bot/pi/logger/multiple':
+                        # Changing the logging level on the fly for multiple
+                        # loggers at a time
                         for logger, level in msgdict.items():
                             log.setLevel(logger, level)
                     else:
@@ -569,10 +557,10 @@ class DiffDriveManipulatorRobot(object):
             except LowVoltageException:
                 log.critical(LOGGER_DDR_VOLTAGECHECK,
                              msg=f'Voltage low on device '
-                                 f'({self.currentVoltage:.2f}V - '
-                                 f'threshold  = {LOW_VOLTAGE_THRESHOLD:.2f}V)'
-                                 f' - consider charging battery or shutting '
-                                 f'down.')
+                             f'({self.currentVoltage:.2f}V - '
+                             f'threshold  = {LOW_VOLTAGE_THRESHOLD:.2f}V)'
+                             f' - consider charging battery or shutting '
+                             f'down.')
 
     async def asyncOdometryReporting(self, loopDelay):
         """
@@ -585,11 +573,11 @@ class DiffDriveManipulatorRobot(object):
                          msg=f'Joint theta (degrees) = {self.arm}')
                 log.info(LOGGER_DDR_ODOMETRY,
                          msg=f'Latest Vb6 = {self.base.Vb6} ; '
-                             f'Phi(degrees) = '
-                             f'{degrees(self.base.currentPhi):.2f}')
+                         f'Phi(degrees) = '
+                         f'{degrees(self.base.currentPhi):.2f}')
                 log.info(LOGGER_DDR_ODOMETRY,
                          msg=f'Latest Base SE3 (self.base.Tsb) = \n'
-                             f'{self.base.Tsb}')
+                         f'{self.base.Tsb}')
                 # Don't read actual position, there's a race condition
                 left = self.base.oldLeftPhi
                 right = self.base.oldRightPhi
@@ -625,12 +613,12 @@ class DiffDriveManipulatorRobot(object):
                     self.killSwitch()
                 log.warning(LOGGER_DDR_EXECUTORKILLSWITCH,
                             msg=f'Button pressed. Urgent Stop switch '
-                                f'flipped. Threads using motors should '
-                                f'stop.')
+                            f'flipped. Threads using motors should '
+                            f'stop.')
         except:
             log.warning(LOGGER_DDR_EXECUTORKILLSWITCH,
                         msg=f'Error in the kill switch routing : '
-                            f'{traceback.print_exc()}')
+                        f'{traceback.print_exc()}')
 
     def __adjustConfigDict(self, confDict):
         '''
@@ -670,13 +658,13 @@ class DiffDriveManipulatorRobot(object):
         def on_connect(client, userdata, flags, rc):
             log.warning(LOGGER_DDR_THREADIMPLMQTT,
                         msg=f'Connected to MQTT broker. '
-                            f'Result code {rc}')
+                        f'Result code {rc}')
             mqtt_connect_result, self.mqtt_connect_mid = \
                 client.subscribe(self.mqtt_topics)
             if mqtt_connect_result == mqtt.MQTT_ERR_SUCCESS:
                 log.warning(LOGGER_DDR_THREADIMPLMQTT,
                             msg=f'Successfully subscribed '
-                                f'to {self.mqtt_topics}')
+                            f'to {self.mqtt_topics}')
             else:
                 log.error(LOGGER_DDR_THREADIMPLMQTT,
                           msg=f'MQTT Broker subscription problem.')
@@ -687,8 +675,8 @@ class DiffDriveManipulatorRobot(object):
             """
             log.info(LOGGER_DDR_THREADIMPLMQTT,
                      msg=f'Received MID {message.mid} : '
-                         f'{str(message.payload)} on topic '
-                         f'{message.topic} with QoS {message.qos}')
+                     f'{str(message.payload)} on topic '
+                     f'{message.topic} with QoS {message.qos}')
             self.mqttMoveQueue.put_nowait(message)
 
         def on_disconnect(client, userdata, rc=0):
@@ -696,17 +684,17 @@ class DiffDriveManipulatorRobot(object):
             """
             log.info(LOGGER_DDR_THREADIMPLMQTT,
                      msg=f'Disconnected MQTT result code = {rc}.'
-                         f'Should automatically re-connect to broker')
+                     f'Should automatically re-connect to broker')
 
         def on_subscribe(client, userdata, mid, granted_qos):
             if mid == self.mqtt_connect_mid:
                 log.warning(LOGGER_DDR_THREADIMPLMQTT,
                             msg=f'Subscribed to topics. Granted QOS '
-                                f'= {granted_qos}')
+                            f'= {granted_qos}')
             else:
                 log.error(LOGGER_DDR_THREADIMPLMQTT,
                           msg=f'Strange... MID doesn\'t match '
-                              f'self.mqtt_connect_mid')
+                          f'self.mqtt_connect_mid')
 
         self.mqttClient = mqtt.Client(
             client_id="mybot",

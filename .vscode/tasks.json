@@ -9,10 +9,10 @@
             "isBackground": false,
             "command": [
                 "docker rm motiondriver-dev;",
-                "export DOCKER_IMG=motiondriver:test;",
+                "export DOCKER_IMG=motiondriver:testros;",
                 "export SCRIPT=\"src/startup.py\";",
                 "export CWD=\"/root/motiondriver\";",
-                "export ROOT_CWD=\"/home/robot/proj/motiondriver\";",
+                "export ROOT_CWD=\"/home/robot/proj/jetson-motion-driver\";",
                 "export DOCKER_ARGS=\"--privileged -d --name motiondriver-dev --network host\";",
                 "export DOCKER_ARGS=\"$DOCKER_ARGS -v $ROOT_CWD:$CWD\";",
                 "export DOCKER_ARGS=\"$DOCKER_ARGS -w $CWD\";",

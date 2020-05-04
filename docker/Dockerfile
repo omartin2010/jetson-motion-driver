@@ -10,6 +10,12 @@ RUN pip3 install numpy \
     paho-mqtt \
     git+https://github.com/microsoft/debugpy.git
 
+# Install ROS
+RUN apt-get install -y \
+    ros-robot \
+    python3-rospy \
+    --no-install-recommends
+
 ENV DEBIAN_FRONTEND="noninteractive"
 RUN apt install -y tzdata
 RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime

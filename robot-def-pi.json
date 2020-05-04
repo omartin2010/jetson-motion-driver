@@ -17,8 +17,8 @@
                             "bot/gripper/open",
                             "bot/gripper/close",
                             "bot/killSwitch",
-                            "bot/logger",
-                            "bot/logger/multiple"],
+                            "bot/pi/logger",
+                            "bot/pi/logger/multiple"],
         "publishingTopics":["client/moveBaseFeedback",
                             "client/moveEndEffectorFeedback",
                             "client/ErrorHandling"]
